@@ -1,5 +1,8 @@
 package kr.or.ddit.controller;
 
+import kr.or.ddit.service.BookService;
+import kr.or.ddit.vo.BookVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +24,13 @@ log.info : 썰
 @Slf4j
 @Controller
 public class BookController {
+
+    //서비스를 호출하기 위해 의존성 주입(Dependency Injection-DI)
+    //IoC(Inversion of Control) -
+    //   제어의 역전.(개발자가 객체생성하지 않고 스프링이 객체를 미리 생성해놓은 것을 개발자가 요청)
+    @Autowired
+    BookService bookService;
+    
     //책 입력 화면
    /*
     요청URI : /create
@@ -60,12 +70,19 @@ public class BookController {
     모든 파라미터는 문자. 그래서 price의 값이 "12000"도 숫자형 문자임
     */
     @RequestMapping(value="/createPost", method=RequestMethod.POST)
-    public ModelAndView createPost(String title, String category, String price) {
-    	
-    	log.info("title : " + title);
-    	log.info("category : " + category);
-    	log.info("price : " + price);
-    	
-    	return null;
+    public ModelAndView createPost(BookVO bookVO) {
+
+        log.info("createPost -> bookVo:" + bookVO);
+        //insert/update/delete 시 return 타입은 int
+        //BOOK 테이블에 도서를 등록
+        int result = this.bookService.createPost(bookVO);
+        log.info("createPost -> result : " + result);
+        log.info("createPost -> bookVO : " + bookVO);
+
+
+//      ModelAndView mav = new ModelAndView();
+        //redirect : URI를 재요청
+
+    	return new ModelAndView("redirect:/detail?bookId="+bookVO.getBookId());
     }
 }
