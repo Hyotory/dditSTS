@@ -4,11 +4,15 @@ import kr.or.ddit.service.BookService;
 import kr.or.ddit.vo.BookVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
 
 /*
 Controller 어노테이션
@@ -85,4 +89,78 @@ public class BookController {
 
     	return new ModelAndView("redirect:/detail?bookId="+bookVO.getBookId());
     }
+
+    //도서 상세
+    //요청된 URI 주소 : http://localhost/detail?bookId=3
+    //요청파라미터, HTTP Parameter, 쿼리 스트링(Query String) : bookId=3
+    //요청방식 : get
+    //매개변수 : BookVO bookVO => {"bookId":"3","title":"","category":""
+    //               ,"price":0,"insertDate":""}
+
+    @RequestMapping(value="/detail", method=RequestMethod.GET)
+    public ModelAndView detail(@RequestParam(value="bookId") int bookId,
+                               @ModelAttribute(value="bookVO") BookVO bookVO,
+                               ModelAndView mav) {
+        log.info("detail -> bookId():" + bookId);
+        log.info("detail -> bookVO:" + bookVO);
+
+        bookVO = this.bookService.detail(bookVO);
+        log.info("detail -> bookVO:" + bookVO);
+
+        //model : 데이터를 jsp로 넘겨줌
+        //session.setAttribute(속성명, 데이터)
+        mav.addObject("bookVO", bookVO);
+
+        //view : jsp의 경로
+        // /WEB-INF/views/ + ... + .jsp
+        mav.setViewName("book/detail");
+        return mav;
+    }
+
+    /*
+    요청URI : /modify?bookId=3
+    요청파라미터 : bookId=3
+    요청방식 : get
+
+    요청파라미터의 타입은 bookId="3" 숫자형문자타입 -> 스프링 -> int 타입으로 자동 형변환
+    */
+    @RequestMapping(value="/modify", method=RequestMethod.GET)
+    public ModelAndView modify(int bookId, BookVO bookVO,
+                               @RequestParam Map<String, Object> map,
+                               ModelAndView mav) {
+        log.info("modify -> bookId():" + bookId);
+        log.info("modify -> bookVO: {}", bookVO);
+        log.info("modify -> map: {}", map);
+
+        // 도서 상세
+        bookVO = this.bookService.detail(bookVO);
+        log.info("detail -> bookVO:" + bookVO);
+
+        // 데이터
+        mav.addObject("bookVO", bookVO);
+
+        // 뷰(jsp) 경로
+        mav.setViewName("book/modify");
+
+        return mav;
+    }
+
+    /*  도서 수정 실행
+   요청URI : /modifyPost
+   요청파라미터 : request{bookId=3,title=총알탄 개똥이3,category=소설3,price=12003}
+   요청방식 : post
+    */
+    @RequestMapping(value="/modifyPost", method=RequestMethod.POST)
+    public ModelAndView modifyPost(BookVO bookVO) {
+        log.info("modifyPost -> bookVO:" + bookVO);
+
+        // 도서 등록 + 도서 수정 실행
+        int result = this.bookService.createPost(bookVO);
+        log.info("modifyPost -> result : " + result);
+
+        // 상세로 이동
+        // 새로운 URI를 재요청: redirect
+        return null;
+    }
+
 }

@@ -34,4 +34,9 @@ public class BookServiceImpl implements BookService {
     public int createPost(BookVO bookVO) {
         return this.bookMapper.createPost(bookVO);
     }
+
+    @Override
+    public BookVO detail(BookVO bookVO) {
+        return this.bookMapper.detail(bookVO);
+    }
 }
