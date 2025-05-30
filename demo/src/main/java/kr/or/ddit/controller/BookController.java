@@ -4,6 +4,7 @@ import kr.or.ddit.service.BookService;
 import kr.or.ddit.vo.BookVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -150,17 +152,73 @@ public class BookController {
    요청파라미터 : request{bookId=3,title=총알탄 개똥이3,category=소설3,price=12003}
    요청방식 : post
     */
+
+
     @RequestMapping(value="/modifyPost", method=RequestMethod.POST)
     public ModelAndView modifyPost(BookVO bookVO) {
         log.info("modifyPost -> bookVO:" + bookVO);
+
+        //bookVO객체의 bookId프로퍼티의 값을 백업해놓기
+        int bookId = bookVO.getBookId();
 
         // 도서 등록 + 도서 수정 실행
         int result = this.bookService.createPost(bookVO);
         log.info("modifyPost -> result : " + result);
 
+        // Mapper.xml의 Merge Into문 실행 후 변경된 bookVO의 bookId값을
+        // 백업된 값으로 보정
+        bookVO.setBookId(bookId);
+
         // 상세로 이동
         // 새로운 URI를 재요청: redirect
-        return null;
+        return new ModelAndView("redirect:/detail?bookId=" + bookId);
+    }
+
+    /* 도서 삭제
+   요청URI : /deletePost
+   요청파라미터 : request{bookId=2}
+   요청방식 : post
+   */
+    @RequestMapping(value="/deletePost",method=RequestMethod.POST)
+    public ModelAndView deletePost(int bookId,
+                                   BookVO bookVO, @RequestParam Map<String,Object> map,
+                                   ModelAndView mav) {
+        log.info("deletePost->bookId : {}", bookId);
+        log.info("deletePost->bookVO : " + bookVO);
+        log.info("deletePost->map : " + map);
+
+        //1.책 삭제
+        int result = this.bookService.deletePost(bookVO);
+        log.info("deletePost -> result : " + result);
+
+        if(result > 0) {//삭제 성공(1행 이상)
+            //redirect -> 목록 URI 재요청(상세페이지가 없으므로)
+            mav.setViewName("redirect:/list");
+        }else {//삭제 실패(0)
+            //상세 페이지로 되돌아옴
+            mav.setViewName("redirect:/detail?bookId="+bookVO.getBookId());
+        }
+
+        return mav;
+    }
+
+    /*
+    요청URI : /list
+    요청파라미터 :
+    요청방식 : get
+    */
+    @RequestMapping(value="/list", method=RequestMethod.GET)
+    public ModelAndView list(ModelAndView mav) {
+
+        List<BookVO> bookVOList = this.bookService.list();
+        log.info("list -> bookVOList:" + bookVOList);
+
+        // Model(데이터)
+        mav.addObject("bookVOList", bookVOList);
+
+        //forwarding : jsp
+        mav.setViewName("book/list");
+        return mav;
     }
 
 }

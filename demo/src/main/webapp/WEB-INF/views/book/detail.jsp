@@ -5,6 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Insert title here</title>
+    <!-- 정적폴더 static은 url /로 접근 -->
+    <script type="text/javascript" src="/js/jquery.min.js" ></script>
 </head>
 <body>
 	<h2>도서 등록</h2>
@@ -40,7 +42,8 @@
             데이터만 서버로 전달 됨
    -->
     <p>${bookVO}</p>
-   <form action="/createPost" method="post">
+   <form id="frm" action="/createPost" method="post">
+      <input type="hidden" name="bookId" value="${bookVO.bookId}">
       <!-- 폼데이터 -->
       <p>제목 : <input type="text" name="title" required placeholder="제목"
                value="${bookVO.title}" readonly/></p>
@@ -53,10 +56,47 @@
                서버로 전달되는 항목들은 form 태그 안에 존재해야 함.
                name 속성은 key로, value 속성을 value로 판단함
              -->
-         <a href="/modify?bookId=${bookVO.bookId}">수정</a>
-         <a href="/delete?bookId=${bookVO.bookId}">삭제</a>
+         <a href="/modify?bookId=${param.bookId}">수정</a>
+         <a href="#" id="aDelete">삭제</a>
          <a href="/list">목록</a>
       </p>
    </form>
+
+   <script type="text/javascript">
+    //DOM : Document Object Model
+    document.addEventListener('DOMContentLoaded', function(){
+        // $("#aDelete").on("click",function(){
+        const deleteButton = document.getElementById("aDelete");
+
+        deleteButton.addEventListener('click', function(){
+            const formElement = document.getElementById("frm");
+            formElement.setAttribute("action", "/deletePost");
+
+            //1. action속성의 값을 /deletePost로 변경
+            //속성=애트리뷰트=필드=컬럼=열
+            // <form id="frm" action="/createPost" method="post">
+            // $("#frm").attr("action","/deletePost");
+
+            //2. confirm으로 삭제 한번 더 확인
+                let result = confirm("삭제하시겠습니까?");
+                console.log("result: ",result);
+
+            //3. <form 을 submit
+            //   => 폼 데이터 중의 <input type="text" name="bookId"..가 필수
+            if(result > 0){
+                console.log("삭제 실행!!");
+                /*
+               요청URI : /deletePost
+               요청파라미터 : request{bookId=2}
+               요청방식 : post
+               */
+                // $("#frm").submit();
+                formElement.submit();
+            } else {
+                alert("삭제가 취소 되었습니다.");
+            }
+        });
+    })
+   </script>
 </body>
 </html>

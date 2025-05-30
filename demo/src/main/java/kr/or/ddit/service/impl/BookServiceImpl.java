@@ -6,6 +6,8 @@ import kr.or.ddit.vo.BookVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 //서비스 클래스 : 비즈니스 로직
 //스프링 MVC 구조에서 Controller와 DAO를 연결하는 역할
 /*
@@ -29,14 +31,23 @@ public class BookServiceImpl implements BookService {
 
     //insert/update/delete 시 return 타입은 int
     //BOOK 테이블에 도서를 등록
-
     @Override
     public int createPost(BookVO bookVO) {
         return this.bookMapper.createPost(bookVO);
     }
-
+    // 도서 상세
     @Override
     public BookVO detail(BookVO bookVO) {
         return this.bookMapper.detail(bookVO);
+    }
+    // 도서 삭제
+    @Override
+    public int deletePost(BookVO bookVO) {
+        return this.bookMapper.deletePost(bookVO);
+    }
+
+    @Override
+    public List<BookVO> list() {
+        return this.bookMapper.list();
     }
 }
