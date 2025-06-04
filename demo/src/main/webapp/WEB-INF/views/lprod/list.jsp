@@ -6,7 +6,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<lprodGu>선엽이 시스템</lprodGu>
+<lprodGu>상품관리 시스템</lprodGu>
+<link rel="stylesheet" href="/AdminLTE/dist/css/adminlte.css" />
+<script type="text/javascript" src="/AdminLTE/dist/js/adminlte.js"></script>
 </head>
 <body>
 	<h1>상품분류 목록</h1>
@@ -23,8 +25,12 @@
 		<form>
 			<select name="gubun">
 				<option value="" selected>선택하세요</option> 
-				<option value="lprodGu" >상품번호</option> 
-				<option value="lprodNm" >상품명</option> 
+				<option value="lprodGu"
+						<c:if test="${param.gubun == 'lprodGu'}">selected</c:if>
+				>상품번호</option>
+				<option value="lprodNm"
+					<c:if test="${param.gubun == 'lprodNm'}">selected</c:if>
+				 >상품명</option>
 			</select>
 			<input type="text" name="keyword" value="${param.keyword}"
 				placeholder="검색어를 입력해주세요"/>
@@ -32,6 +38,69 @@
 			<button type="submit" id="btsSearch">검색</button>
 		</form>
 	</p>
+	<!-- 시멘틱 -->
+	<section class="content">
+		<div class="container-fluid">
+			<div class="row">
+			<%--상품 분류 시작--%>
+			<div class="col-md-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Bordered Table</h3>
+					</div>
+					<!-- /.card-header -->
+					<div class="card-body">
+						<!-- mav.addObject("lprodVOList", lprodVOList); -->
+						<table class="table table-bordered">
+							<thead>
+							<tr>
+								<th style="width: 10%">번호</th>
+								<th style="width: 20%">상품분류 아이디</th>
+								<th style="width: 35%">상품분류 구분</th>
+								<th style="width: 35%">상품분류 명</th>
+							</tr>
+							</thead>
+							<tbody>
+								<!--
+							   lprodVOList : List<LprodVO>
+
+							   forEach태그? 배열(String[], int[][]), Collection(List, Set) 또는
+										Map(HashTable, HashMap, SortedMap)
+
+								var : 변수
+								items : 아이템(배열, Collection, Map)
+								varStatus : 루프 정보를 담은 객체 활용
+									- index : 루프 실행 시 현재 인덱스(0부터 시작)
+									- count : 실행 회수(1부터 시작. 보통 행번호 출력)
+								-->
+							<c:forEach var="lprodVO" items="${lprodVOList}" varStatus="stat">
+								<tr>
+									<td>${stat.count}</td>
+									<td>${lprodVO.lprodId}</td>
+									<td><a href="/lprod/detail?lprodId=${lprodVO.lprodId}">${lprodVO.lprodGu}</a></td>
+									<td>${lprodVO.lprodNm}</td>
+								</tr>
+							</c:forEach>
+							</tbody>
+						</table>
+					</div>
+					<!-- /.card-body -->
+					<div class="card-footer clearfix">
+						<ul class="pagination pagination-sm m-0 float-right">
+							<li class="page-item"><a class="page-link" href="#">«</a></li>
+							<li class="page-item"><a class="page-link" href="#">1</a></li>
+							<li class="page-item"><a class="page-link" href="#">2</a></li>
+							<li class="page-item"><a class="page-link" href="#">3</a></li>
+							<li class="page-item"><a class="page-link" href="#">»</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<%--상품 분류 목록 끝--%>
+			</div>
+		</div>
+	</section>
+
 	<table border="1">
 		<thead>
 			<tr>
@@ -68,7 +137,7 @@
 						<td>${stat.count}</td>
 						<td>${lprodVO.lprodId}</td>
 						<!-- 제목 클릭시 상세 페이지로 이동 -->
-						<td><a href="/detail?lprodId=${lprodVO.lprodId}">${lprodVO.lprodGu}</a></td>
+						<td><a href="/lprod/detail?lprodId=${lprodVO.lprodId}">${lprodVO.lprodGu}</a></td>
 						<td>${lprodVO.lprodNm}</td>
 					</tr>
 				</c:forEach>

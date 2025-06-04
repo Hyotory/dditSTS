@@ -90,7 +90,7 @@ public class LprodController {
 		// redirect : URI를 재요청
 
 		// return new ModelAndView("redirect:/create");
-		return new ModelAndView("redirect:/detail?lprodId=" + lprodVO.getLprodId());
+		return new ModelAndView("redirect:/lprod/detail?lprodId=" + lprodVO.getLprodId());
 
 	}
 
@@ -178,7 +178,7 @@ public class LprodController {
 		
 		//상세로 이동
 		//새로운 URI를 재요청 : redirect
-		return new ModelAndView("redirect:/detail?lprodId=" + lprodId);
+		return new ModelAndView("redirect:/lprod/detail?lprodId=" + lprodId);
 
 	}
 	
@@ -203,25 +203,24 @@ public class LprodController {
 		if(result > 0) {//삭제 성공(1행 이상)
 		
 			//redirect -> 목록 URI 재요청
-			mav.setViewName("redirect:/list");
+			mav.setViewName("redirect:/lprod/list");
 		
 		}else {//삭제 실패(0)
 			
 			//상세페이지로 되돌아옴
-			mav.setViewName("redirect:/detail?lprodId="+lprodVO.getLprodId());
+			mav.setViewName("redirect:/lprod/detail?lprodId="+lprodVO.getLprodId());
 
 		}
 		return mav;
 	}
 	
 	
-	/*	도서 목록 
-	 action속성 및 값이 생략 시, 현재 URI(/list)를 재요청. 
-	    method는 GET(form 태그의 기본 HTTP 메소드는 GET임) 
-	 param : keyword=모험
-	 요청URI : /list?gubun=title&keyword=모험 or /list or /list?gubun=&keyword=
-	 요청파라미터 : keyword=모험
-	 요청방식 : get
+	/* action속성 및 값이 생략 시, 현재 URI(/list)를 재요청.
+		method는 GET(form 태그의 기본 HTTP 메소드는 GET임)
+		param : keyword=모험
+		요청URI : /lprod/list?keyword=캐주얼&gubun=lprodNm or /lprod/list or /lprod/list?keyword=&gubun=
+		요청파라미터 : keyword=모험
+		요청방식 : get
 	*/
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list(ModelAndView mav,

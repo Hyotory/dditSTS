@@ -45,35 +45,75 @@
     </insert>
 
     <!--
-    도서 상세
-    BookVO [bookId=3, title=null, category=null, price=0, insertDate=null]
-    public BookVO detail(BookVO bookVO)
-    매퍼 인터페이스의 메소드 명을 매퍼 XML의 id속성의 값으로 쓴다
+   도서 상세
+ BookVO [bookId=3, title=null, category=null, price=0, insertDate=null]
+ public BookVO detail(BookVO bookVO);
+ 매퍼 인터페이스의 메소드 명을 매퍼 XML의 id속성의 값으로 쓴다
 
-    application.properties => mybatis.type-aliases-package=kr.or.ddit.vo
-    kr.or.ddit.vo.BookVO(o)
-   BookVO(o)
-   bookVO(o)
-   #{} : 플레이스 홀더 구문
-    -->
+ application.properties => mybatis.type-aliases-package=kr.or.ddit.vo
+
+ kr.or.ddit.vo.BookVO(o)
+ BookVO(o)
+ bookVO(o)
+ #{} : 플레이스홀더 구문
+ BookVO [bookId=3, title=제목, category=카테고리, price=12000, insertDate=2025-05-29]
+ -->
     <select id="detail" parameterType="bookVO" resultType="bookVO">
-        SELECT BOOK_ID, TITLE, CATEGORY, PRICE, INSERT_DATE
-        FROM BOOK
-        WHERE BOOK_ID = #{bookId}
+        SELECT  BOOK_ID, TITLE, CATEGORY, PRICE, INSERT_DATE
+        FROM    BOOK
+        WHERE   BOOK_ID = #{bookId}
     </select>
 
-    <!--도서 삭제 Mybatis 프레임워크의 delete태그는 delete 쿼리를 실행하기 위한 마이바티스 태그
-    BookVO [bookId=3, title=총알탄 개똥이3, category=소설,
-          price=2000, insertDate=null]
-    public int deletePost(BookVO bookVO);-->
-    <delete id="deletePost" parameterType="BookVO">
-        DELETE FROM BOOK
-        WHERE BOOK_ID = #{bookId}
+    <!-- 도서 삭제
+	BookVO [bookId=3, title=총알탄 개똥이3, category=소설,
+	price=2000, insertDate=null]
+	public int deletePost(BookVO bookVO) -->
+    <delete id="deletePost" parameterType="bookVO">
+        DELETE  FROM BOOK
+        WHERE   BOOK_ID= #{bookId}
     </delete>
 
-    <select id="list" resultType="BookVO">
+    <!-- //도서 목록
+map{keyword=모험}
+public List<BookVO> list(Map<String, Object> map)
+
+like 연산자와 함께 사용된 % 또는 _를 와일드카드라고 함
+     % : 여러글자 /  _ : 한 글자
+
+[연산 순서]
+휴..낮엔 더워
+() NOT AND OR
+
+/list?gubun=title&keyword=모험 or /list or /list?gubun=&keyword=
+
+1. gubun 값이 없으면 : 전체 검색
+2. gubun 값이 있으면 : 해당 구분 검색
+-->
+    <select id="list" parameterType="hashMap" resultType="bookVO">
         SELECT BOOK_ID, TITLE, CATEGORY, PRICE, INSERT_DATE
         FROM   BOOK
+        WHERE  1 = 1
+        <if test="gubun!=null and gubun!=''"><!-- 구분에 값이 있을 때 -->
+            <choose>
+                <when test='gubun=="title"'><!-- 제목 검색 -->
+                    AND TITLE LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test='gubun=="category"'><!-- 카테고리 검색 -->
+                    AND CATEGORY LIKE '%' || #{keyword} || '%'
+                </when>
+                <otherwise><!-- 기타(가격) 검색 -->
+                    AND PRICE LIKE '%' || #{keyword} || '%'
+                </otherwise>
+            </choose>
+        </if>
+        <if test="gubun==null or gubun==''"><!-- 구분에 값이 없을 때 -->
+            <if test="keyword!=null and keyword!=''">
+                AND    (TITLE    LIKE '%' || #{keyword} || '%'
+                OR  CATEGORY LIKE '%' || #{keyword} || '%'
+                OR  PRICE    LIKE '%' || #{keyword} || '%'
+                )
+            </if>
+        </if>
         ORDER BY BOOK_ID DESC
     </select>
 

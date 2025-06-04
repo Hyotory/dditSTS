@@ -33,7 +33,7 @@
 		USING DUAL ON(A.LPROD_ID = #{lprodId})
 		WHEN MATCHED THEN
 		    UPDATE 
-		    SET    LPROD_GU,=#{lprodGu},LPROD_NM=#{lprodNm}
+		    SET    LPROD_GU=#{lprodGu},LPROD_NM=#{lprodNm}
 		    WHERE  LPROD_ID = #{lprodId}
 		WHEN NOT MATCHED THEN
 		    INSERT (LPROD_ID, LPROD_GU, LPROD_NM)
@@ -91,9 +91,9 @@
       SELECT LPROD_ID, LPROD_GU, LPROD_NM
       FROM   LPROD
       WHERE  1 = 1
-      <if test="gubun!=null and gubun!=''"><!-- 구분에 값이 있을 때 -->
+      <if test="gubun!= null and gubun!= ''"><!-- 구분에 값이 있을 때 -->
          <choose>
-            <when test='gubun=="lprodGu"'><!-- 상품번호 검색 -->
+            <when test='gubun == "lprodGu"'><!-- 상품번호 검색 -->
                AND LPROD_GU LIKE '%' || #{keyword} || '%'
             </when>
             <otherwise><!-- 기타(상품명) 검색 -->
@@ -103,8 +103,8 @@
       </if>
       <if test="gubun==null or gubun==''"><!-- 구분에 값이 없을 때 -->
          <if test="keyword!=null and keyword!=''">
-         AND    (LPROD_GU    LIKE '%' || #{keyword} || '%'
-            OR  LPROD_NM LIKE '%' || #{keyword} || '%'
+             AND    (LPROD_GU LIKE '%' || #{keyword} || '%'
+             OR      LPROD_NM LIKE '%' || #{keyword} || '%'
          )      
          </if>
       </if>
