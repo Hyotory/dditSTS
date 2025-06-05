@@ -56,5 +56,10 @@ public class LprodServiceImpl implements LprodService {
 		return this.lprodMapper.list(map);
 	}
 
+	@Override
+	public int getTotal(Map<String, Object> map) {
+		return this.lprodMapper.getTotal(map);
+	}
+
 
 }

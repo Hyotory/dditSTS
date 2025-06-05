@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.or.ddit.util.ArticlePage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -225,24 +226,38 @@ public class LprodController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list(ModelAndView mav,
 			@RequestParam(value = "keyword",required = false, defaultValue = "" ) String keyword,
-			@RequestParam(value = "gubun",required = false, defaultValue = "" ) String gubun) {
-		
+			@RequestParam(value = "gubun",required = false, defaultValue = "" ) String gubun,
+			@RequestParam(value="currentPage", required = false, defaultValue = "1") int currentPage){
+
 		// /list->keyword : 모험
 		// /list->keyword :
 		log.info("list->keyword : " + keyword);
 		log.info("list->gubun : " + gubun);
+		log.info("list->currentPage : " + currentPage);
 		
 		//맴(나) : 하 하 쏘맵
 		//Map	: HashTable, HasMap, SortedMap
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("keyword", keyword);
 		map.put("gubun", gubun);
-		
+		map.put("currentPage", currentPage);
+
+		// total 구하기
+		int total = this.lprodService.getTotal(map);
+		log.info("list->total: " + total);
+
+		// content 구성
 		List<LprodVO> lprodVOList = this.lprodService.list(map);
 		log.info("list->lprodVOList : " + lprodVOList);
-		
+
+		// 페이징 객체 생성
+		ArticlePage<LprodVO> articlePage =
+				new ArticlePage<LprodVO>(total, currentPage, 10, lprodVOList, keyword);
+		log.info("list->articlePage : " + articlePage);
+
 		//Model(데이터)
 		mav.addObject("lprodVOList", lprodVOList);
+		mav.addObject("articlePage", articlePage);
 		//forwarding : jsp
 		mav.setViewName("lprod/list");
 		

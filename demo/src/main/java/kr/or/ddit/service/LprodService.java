@@ -20,4 +20,5 @@ public interface LprodService {
 	//상품목록
 	public List<LprodVO> list(Map<String, Object> map);
 
+    int getTotal(Map<String, Object> map);
 }
