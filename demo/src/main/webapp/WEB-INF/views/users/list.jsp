@@ -6,34 +6,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-<h2>상품관리 시스템</h2>
+<h2> 회원 목록 </h2>
 <link rel="stylesheet" href="/AdminLTE/dist/css/adminlte.css" />
 <script type="text/javascript" src="/AdminLTE/dist/js/adminlte.js"></script>
 </head>
 <body>
-	<!-- action속성 및 값이 생략 시, 현재 URI(/list)를 재요청.
-         method는 GET(form 태그의 기본 HTTP 메소드는 GET임) 
-      param : keyword=모험
-      요청URI : /list?keyword=모험 or /list or /list?keyword=
-      요청파라미터 : keyword=모험
-      요청방식 : get
-      -->
-		<form>
-			<select name="gubun">
-				<option value="" selected>선택하세요</option> 
-				<option value="lprodGu"
-						<c:if test="${param.gubun == 'lprodGu'}">selected</c:if>
-				>상품번호</option>
-				<option value="lprodNm"
-					<c:if test="${param.gubun == 'lprodNm'}">selected</c:if>
-				 >상품명</option>
-			</select>
-			<input type="text" name="keyword" value="${param.keyword}"
-				placeholder="검색어를 입력해주세요"/>
-			<!-- submit / button / reset -->
-			<button type="submit" id="btsSearch">검색</button>
-		</form>
 
+
+	<form>
+		<select name="gubun">
+			<option value="" selected>선택하세요</option>
+			<option value="userName"
+					<c:if test="${param.gubun == 'userName'}">selected</c:if>
+			>권한</option>
+			<option value="name"
+					<c:if test="${param.gubun == 'name'}">selected</c:if>
+			>회원명</option>
+		</select>
+		<input type="text" name="keyword" value="${param.keyword}"
+			   placeholder="검색어를 입력해주세요"/>
+		<!-- submit / button / reset -->
+		<button type="submit" id="btsSearch">검색</button>
+	</form>
+
+	<!-- 시멘틱 -->
 	<section class="content">
 		<div class="container-fluid">
 			<div class="row">
@@ -50,9 +46,10 @@
 							<thead>
 							<tr>
 								<th style="width: 10%">번호</th>
-								<th style="width: 20%">상품분류 아이디</th>
-								<th style="width: 35%">상품분류 구분</th>
-								<th style="width: 35%">상품분류 명</th>
+								<th style="width: 20%">권한</th>
+								<th style="width: 20%">이름</th>
+								<th style="width: 25%">비밀번호</th>
+								<th style="width: 25%">상태</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -68,32 +65,32 @@
 									- index : 루프 실행 시 현재 인덱스(0부터 시작)
 									- count : 실행 회수(1부터 시작. 보통 행번호 출력)
 								-->
-							<c:forEach var="lprodVO" items="${articlePage.content}" varStatus="stat">
+							<c:forEach var="user" items="${usersVOList}" varStatus="stat" >
 								<tr>
-									<td>${lprodVO.rnum}</td>
-									<td>${lprodVO.lprodId}</td>
-									<td><a href="/lprod/detail?lprodId=${lprodVO.lprodId}">${lprodVO.lprodGu}</a></td>
-									<td>${lprodVO.lprodNm}</td>
+									<td>${stat.count}</td>
+									<td>${user.userName}</td>
+									<td>${user.name}</td>
+									<td>${user.password}</td>
+									<td>${user.enabled}</td>
 								</tr>
 							</c:forEach>
 							</tbody>
 						</table>
 					</div>
-					<!-- /.card-body -->
 					<div class="card-footer clearfix">
 						<ul class="pagination pagination-sm m-0 float-right">
 							<!-- 시작 블록 번호가 6보다 작을 때 가리자. 6이상일 땐 보이게 됨 -->
 							<li class="page-item"><a class="page-link"
-													 href="/lprod/list?currentPage=${articlePage.startPage-5}&keyword=${param.keyword}&gubun=${param.gubun}"
+													 href="/users/list?currentPage=${articlePage.startPage-5}&keyword=${param.keyword}&gubun=${param.gubun}"
 													 <c:if test="${articlePage.startPage < 6}">style="display:none;"</c:if>
 							>«</a></li>
 							<c:forEach var="pNo" begin="${articlePage.startPage}" end="${articlePage.endPage}">
 								<li class="page-item"><a class="page-link"
-														 href="/lprod/list?currentPage=${pNo}&keyword=${param.keyword}&gubun=${param.gubun}">${pNo}</a></li>
+														 href="/users/list?currentPage=${pNo}&keyword=${param.keyword}&gubun=${param.gubun}">${pNo}</a></li>
 							</c:forEach>
 							<!-- 종료 블록 번호가 전체 페이지 수 보다 크거나 같다면 none -->
 							<li class="page-item"><a class="page-link"
-													 href="/lprod/list?currentPage=${articlePage.startPage+5}&keyword=${param.keyword}&gubun=${param.gubun}"
+													 href="/users/list?currentPage=${articlePage.startPage+5}&keyword=${param.keyword}&gubun=${param.gubun}"
 													 <c:if test="${articlePage.endPage>=articlePage.totalPages}">style="display:none"</c:if>
 							>»</a></li>
 						</ul>
@@ -106,7 +103,7 @@
 	</section>
 
 	<p>
-		<a href="/lprod/create">상품분류 등록</a>
+		<a href="/users/create">회원 등록</a>
 	</p>
 </body>
 </html>

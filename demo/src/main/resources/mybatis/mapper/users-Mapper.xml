@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.mapper.UsersMapper">
+
+    <sql id="where">
+        <if test="gubun!=null and gubun!=''"><!-- 구분에 값이 있을 때 -->
+            <choose>
+                <when test='gubun=="lprodGu"'><!-- 상품분류 구분 검색 -->
+                    AND LPROD_GU LIKE '%' || #{keyword} || '%'
+                </when>
+                <otherwise><!-- 상품분류 명 검색 -->
+                    AND LPROD_NM LIKE '%' || #{keyword} || '%'
+                </otherwise>
+            </choose>
+        </if>
+        <if test="gubun==null or gubun==''"><!-- 구분에 값이 없을 때 -->
+            <if test="keyword!=null and keyword!=''">
+                AND    (LPROD_GU    LIKE '%' || #{keyword} || '%'
+                OR  LPROD_NM    LIKE '%' || #{keyword} || '%'
+                )
+            </if>
+        </if>
+    </sql>
+
+    <!-- 관계차수 => USERS : AUTHORITIES = 1 : N
+   mybatis.type-aliases-package=kr.or.ddit.vo
+   -->
+    <resultMap id="usersMap" type="UsersVO">
+        <result property="userName" column="USERNAME" />
+        <result property="name" column="NAME" />
+        <result property="password" column="PASSWORD" />
+        <result property="enabled" column="ENABLED" />
+        <collection property="authoritiesVOList" resultMap="authoritiesMap" />
+    </resultMap>
+
+    <resultMap id="authoritiesMap" type="authoritiesVO">
+        <result property="userName" column="USERNAME" />
+        <result property="authorities" column="AUTHORITIES" />
+    </resultMap>
+
+    <!-- MyBatis에서 제공해주는 데이터 입력을 나타내는 태그
+   1) 드루와 : Mapper 객체가 던진 데이터타입.parameterType만 씀
+   2) 가즈아 : Mapper 객체의 메소드 쪽으로 리턴할 타입.
+     - resultType : vo, hashMap, String, int
+     - resultMap  : MyBatis의 resultMap 태그를 사용(조인문)
+   -->
+    <select id="list" resultMap="usersMap">
+        SELECT A.USERNAME, A.NAME, A.PASSWORD, A.ENABLED
+              , B.AUTHORITY
+        FROM USERS A
+        INNER JOIN AUTHORITIES B ON (A.USERNAME = B.USERNAME)
+        ORDER BY 1
+    </select>
+
+    <!-- total 구하기
+    public int getTotal(Map<String, Object> map)
+     -->
+    <select id="getTotal" parameterType="hashMap" resultType="int">
+        SELECT COUNT(*)
+        FROM   USERS
+        WHERE  1 = 1
+
+        <include refid="where"/>
+
+    </select>
+
+</mapper>
+

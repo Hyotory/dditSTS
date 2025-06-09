@@ -1,0 +1,71 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Insert title here</title>
+</head>
+<body>
+<h2>상품 수정</h2>
+<!--
+JSTL(JSP Standard Tag Library) : 개발자들이 자주 사용하는 패턴을 모아놓은 집합
+=> LprodController에서 보내준 데이터를 뷰(jsp)에 표현하도록 도와줌
+
+method
+1) GET : 데이터를 변경하지 않을 때. 목록/상세보기
+2) POST : 데이터를 변경할 때. 입력/수정/삭제
+
+업데이트 쎄대여
+UPDATE LPROD
+SET    LPROD_GU='p101', LPROD_NM='컴퓨터제품'
+WHERE  LPROD_ID = 1
+
+등푸른생선 주세여
+DELETE FROM LPROD
+WHERE  LPROD_ID = 1
+
+WHERE
+1) 단일행 : =, <, >, <=, >=, !=, <>
+2) 다중행 : IN(교집합), ANY(OR), ALL(AND), EXISTS(교집합)
+-->
+<!--
+요청URI : /createPost
+요청파라미터(HTTP파라미터) : {lprodGu=p101, lprodNm=컴퓨터제품}
+요청방식 : post
+
+get방식 : 주소표시줄에 요청파라미터가 노출됨
+post방식 : 주소표시줄에 요청파라미터가 노출되지 않음. 주소창에 변화 없이
+        데이터만 서버로 전달 됨
+mav.addObject("lprodVO", lprodVO);
+EL : Expression Language(표현언어)
+-->
+<p>${lprodVO}</p>
+<!--
+요청URI : /modifyPost
+요청파라미터 : request{lprodId=3,lprodGu=p101,lprodNm=컴퓨터제품}
+요청방식 : post
+ -->
+<form action="/lprod/modifyPost" method="post">
+    <input type="hidden" name="lprodId" value="${lprodVO.lprodId}" />
+    <!-- 폼데이터 -->
+    <p>상품분류 아이디 : <input type="number" name="lprodId" placeholder="상품분류 아이디"
+                         required value="${lprodVO.lprodId}"/></p>
+    <p>상품분류번호 : <input type="text" name="lprodGu" required placeholder="상품분류번호"
+                       value="${lprodVO.lprodGu}" /></p>
+    <p>상품분류명 : <input type="text" name="lprodNm" required placeholder="상품분류명"
+                      value="${lprodVO.lprodNm}" /></p>
+    <p>
+        <!-- <form>~</form> 태그 안에 내용이 서버로 전송됨
+              서버로 전달되는 항목들은 form 태그 안에 존재해야 함.
+              name 속성은 key로, value 속성을 value로 판단함
+            -->
+        <button type="submit">확인</button>
+        <!--
+        /modify?lprodId=3
+        param: lprodId=3
+        param.lprodId => 3
+         -->
+        <a href="/lprod/detail?lprodId=${param.lprodId}">취소</a>
+    </p>
+</form>
+</body>
+</html>
