@@ -1,6 +1,7 @@
 package kr.or.ddit.service;
 
 import kr.or.ddit.vo.BookVO;
+import kr.or.ddit.vo.ProductVO;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface BookService {
     public int deletePost(BookVO bookVO);
 
     public List<BookVO> list();
+
+    public List<ProductVO> products();
 }

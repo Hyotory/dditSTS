@@ -117,4 +117,13 @@ like 연산자와 함께 사용된 % 또는 _를 와일드카드라고 함
         ORDER BY BOOK_ID DESC
     </select>
 
+
+    <!-- List<ProductVO> products(); -->
+    <select id="products" resultType="productsVO">
+        SELECT PRODUCT_ID, PNAME, UNIT_PRICE, DESCRIPTION, MANUFACTURER,
+               CATEGORY, UNITS_IN_STOCK, CONDITION, FILENAME, QUANTITY
+        FROM PRODUCT
+        ORDER BY 1
+    </select>
+
 </mapper>

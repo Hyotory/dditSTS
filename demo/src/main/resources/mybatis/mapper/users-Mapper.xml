@@ -57,11 +57,8 @@
      -->
     <select id="getTotal" parameterType="hashMap" resultType="int">
         SELECT COUNT(*)
-        FROM   USERS
-        WHERE  1 = 1
-
-        <include refid="where"/>
-
+        FROM   USERS A
+        INNER JOIN AUTHORITIES B ON(A.USERNAME = B.USERNAME)
     </select>
 
 </mapper>

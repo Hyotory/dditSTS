@@ -1,6 +1,7 @@
 package kr.or.ddit.mapper;
 
 import kr.or.ddit.vo.BookVO;
+import kr.or.ddit.vo.ProductVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface BookMapper {
     public int deletePost(BookVO bookVO);
 
     public List<BookVO> list();
+
+    public List<ProductVO> products();
 }

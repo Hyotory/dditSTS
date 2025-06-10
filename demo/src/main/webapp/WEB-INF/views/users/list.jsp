@@ -69,7 +69,7 @@
 								<tr>
 									<td>${stat.count}</td>
 									<td>${user.userName}</td>
-									<td>${user.name}</td>
+									<td><a href="/lprod/detail?name=${user.name}">${user.name}</a></td>
 									<td>${user.password}</td>
 									<td>${user.enabled}</td>
 								</tr>
@@ -77,24 +77,7 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="card-footer clearfix">
-						<ul class="pagination pagination-sm m-0 float-right">
-							<!-- 시작 블록 번호가 6보다 작을 때 가리자. 6이상일 땐 보이게 됨 -->
-							<li class="page-item"><a class="page-link"
-													 href="/users/list?currentPage=${articlePage.startPage-5}&keyword=${param.keyword}&gubun=${param.gubun}"
-													 <c:if test="${articlePage.startPage < 6}">style="display:none;"</c:if>
-							>«</a></li>
-							<c:forEach var="pNo" begin="${articlePage.startPage}" end="${articlePage.endPage}">
-								<li class="page-item"><a class="page-link"
-														 href="/users/list?currentPage=${pNo}&keyword=${param.keyword}&gubun=${param.gubun}">${pNo}</a></li>
-							</c:forEach>
-							<!-- 종료 블록 번호가 전체 페이지 수 보다 크거나 같다면 none -->
-							<li class="page-item"><a class="page-link"
-													 href="/users/list?currentPage=${articlePage.startPage+5}&keyword=${param.keyword}&gubun=${param.gubun}"
-													 <c:if test="${articlePage.endPage>=articlePage.totalPages}">style="display:none"</c:if>
-							>»</a></li>
-						</ul>
-					</div>
+					${articlePage.pagingArea}
 				</div>
 			</div>
 			<%--상품 분류 목록 끝--%>
